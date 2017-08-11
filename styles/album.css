@@ -1,5 +1,6 @@
 .song-item-duration {
     width: 5%;
+    min-width: 30px;
 }
 
 .album-song-button {
