@@ -116,12 +116,15 @@ albumImage.addEventListener("click", function(event){
 });
 };
 var findParentByClassName = function(element, targetClass) {
-    if (element) {
+    if (element !== null) {
         var currentParent = element.parentElement;
         while (currentParent.className !== targetClass && currentParent.className !== null) {
             currentParent = currentParent.parentElement;
         }
         return currentParent;
+    else{
+        console.log('No parent found.');
+    }
     }
 };
 var getSongItem = function(element) {
