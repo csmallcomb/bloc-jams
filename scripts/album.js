@@ -10,17 +10,18 @@ var createSongRow = function(songNumber, songName, songLength) {
     var $row = $(template);
     var onHover = function(event){
         var songNumberCell = $(this).find('.song-item-number');
-        var songNumber = songNumberCell.attr('data-song-number');
+        var songNumber = parseInt(songNumberCell.attr('data-song-number'));
         if (songNumber !== currentlyPlayingSongNumber) {
             songNumberCell.html(playButtonTemplate);
         }
     };
     var offHover = function(event) {
         var songNumberCell = $(this).find('.song-item-number');
-        var songNumber = songNumberCell.attr('data-song-number');
+        var songNumber = parseInt(songNumberCell.attr('data-song-number'));
         if (songNumber !== currentlyPlayingSongNumber) {
             songNumberCell.html(songNumber);
         }
+        console.log("songNumber type is " typeOf songNumber + "\n and currentlyPlayingSongNumber type is " + typeof currentlyPlayingSongNumber);
     };
     $row.find('.song-item-number').click(clickHandler);
     $row.hover(onHover, offHover);
@@ -47,6 +48,56 @@ var setCurrentAlbum = function(album) {
     }
 };
 
+var trackIndex = function(album, song) {
+    return album.songs.indexOf(song);
+}
+
+var nextSong = function(){
+    var currentSongIndex = trackIndex(currentAlbum, currentSongFromAlbum);
+    currentSongIndex++;
+
+    if(currentSongIndex >= currentAlbum.songs.length){
+        currentSongIndex = 0;
+    }
+
+    var lastSongNumber = parseInt(currentlyPlayingSongNumber);
+
+    currentlyPlayingSongNumber = parseInt(currentSongIndex + 1);
+    currentSongFromAlbum = currentAlbum.songs[currentSongIndex];
+
+    updatePlayerBarSong();
+
+    var $nextSongNumberCell = $('.song-item-number[data-song-number=" ' + currentlyPlayingSongNumber + ' "]');
+    var $lastSongNumberCell = $('.song-item-number[data-song-number=" ' + lastSongNumber + ' "]');
+
+    $nextSongNumberCell.html(pauseButtonTemplate);
+    $lastSongNumberCell.html(lastSongNumber);
+}
+
+var previousSong = function(){
+    var currentSongIndex = trackIndex(currentAlbum, currentSongFromAlbum);
+    currentSongIndex--;
+
+    if (currentSongIndex < 0){
+        currentSongIndex = currentAlbum.songs.length - 1;
+    }
+
+    var lastSongNumber = parseInt(currentlyPlayingSongNumber);
+
+    currentlyPlayingSongNumber = parseInt(currentSongIndex + 1);
+    currentSongFromAlbum = currentAlbum.songs[currentSongIndex];
+
+    updatePlayerBarSong();
+
+    $('.main-controls .play-pause').html(playerBarPauseButton);
+
+    var $previousSongNumberCell = $('.song-item-number[data-song-number = " ' + currentlyPlayingSongNumber + ' "]');
+    var $lastSongNumberCell = $('.song-item-number[data-song-number = " ' + lastSongNumber + ' "]');
+
+    $previousSongNumberCell.html(pauseButtonTemplate);
+    $lastSongNumberCell.html(lastSongNumber);
+};
+
 var updatePlayerBarSong = function() {
     $('.currently-playing .song-name').text(currentSongFromAlbum.title);
     $('.currently-playing .artist-name').text(currentAlbum.artist);
@@ -63,8 +114,13 @@ var currentAlbum = null;
 var currentlyPlayingSongNumber = null;
 var currentSongFromAlbum = null;
 
+var $previousButton = $('.main-controls .previous');
+var $nextButton = $('.main-controls .next');
+
 $(document).ready(function() {
     setCurrentAlbum(albumPicasso);
+    $previousButton.click(previousSong);
+    $nextButton.click(nextSong);
     songListContainer.addEventListener('mouseover', function(event) {
         if (event.target.parentElement.className === 'album-view-song-item'){
             event.target.parentElement.querySelector('.song-item-number').innerHTML = playButtonTemplate;
@@ -125,8 +181,10 @@ var clickHandler = function() {
         $(this).html(pauseButtonTemplate);
         currentlyPlayingSongNumber = songNumber;
         currentSongFromAlbum = currentAlbum.songs[songNumber - 1];
+        updatePlayerBarSong();
     } else if (currentlyPlayingSongNumber === songNumber) {
         $(this).html(playButtonTemplate);
+        $('.main-controls .play-pause').html(playerBarPlayButton);
         currentlyPlayingSongNumber = null;
         currentSongFromAlbum = null;
     }
