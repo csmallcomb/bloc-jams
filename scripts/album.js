@@ -126,6 +126,7 @@ $(document).ready(function() {
             clickHandler(event.target);
         });
     }
+    var playerBarControls = $('.main-controls .play-pause').addEventListener("click", togglePlayFromPlayerBar);
 }
 
 var albums = [albumPicasso, albumMarconi, albumTwisp];
@@ -175,3 +176,19 @@ var clickHandler = function() {
         }
     }
 };
+
+//part two of ASSIGNMENT 20 (part one complete)
+var togglePlayFromPlayerBar = function(){
+    //if a song is paused and play button is pressed
+    if (isPaused (currentSoundFile).clickHandler ){
+        $(songNumberCell).html(playButtonTemplate);
+        $('.main-controls .play-pause').html(playerBarPauseButton);
+        currentSoundFile.play();
+    }
+    //if a song is currently playing and pause button is pressed
+    if (){
+        $(songNumberCell).html(playButtonTemplate);
+        $('.main-controls .play-pause').html(playerBarPlayButton);
+        currentSoundFile.pause();
+    }
+}
